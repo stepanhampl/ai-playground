@@ -13,10 +13,22 @@ client = OpenAI(
     api_key=api_key,
 )
 
-response = client.chat.completions.create(
-    model=model,
-    messages=[{"role": "user", "content": prompt_typed_into_terminal}],
-    extra_body={"provider": {"order": [provider.capitalize()]}},
-)
+messages = []
 
-print(response.choices[0].message.content)
+while True:
+    try:
+        user_input = input("You: ")
+    except (KeyboardInterrupt, EOFError):
+        break
+
+    messages.append({"role": "user", "content": user_input})
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        extra_body={"provider": {"order": [provider.capitalize()]}},
+    )
+
+    reply = response.choices[0].message.content
+    messages.append({"role": "assistant", "content": reply})
+    print(f"AI: {reply}")
