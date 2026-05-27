@@ -1,5 +1,5 @@
 from exceptions import InvalidToolCall
-from toolkit import Tool
+from toolkit.Tool import Tool
 
 
 class Calculator(Tool):
@@ -23,7 +23,7 @@ class Calculator(Tool):
                 "description": "The second operand"
             }
         },
-        "required": ["operation", "a", "b"]
+        "required": ["operation", "operand1", "operand2"]
     }
     returns = "Result of the calculation."
     when_not_to_use = None
