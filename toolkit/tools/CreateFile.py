@@ -11,18 +11,14 @@ class CreateFile(Tool):
         "properties": {
             "file_path": {
                 "type": "string",
-                "description": "Absolute, where the file will be located."
-            },
-            "file_name": {
-                "type": "string",
-                "description": "Name of the file being created."
+                "description": "Absolute, where the file will be located. Includes file name"
             },
             "file_contents": {
                 "type": "string",
                 "description": "All the contents, which you want to put into the file (initialize the file with content). Empty string for empty file."
             },
         },
-        "required": ["file_path", "file_name", "file_contents"]
+        "required": ["file_path", "file_contents"]
     }
     return_schema = {
         "type": "object",
@@ -45,16 +41,15 @@ class CreateFile(Tool):
     }
     when_not_to_use: str = "Do not use when you want to edit existing file."
 
-    def run(self, file_path: str, file_name: str, file_contents: str) -> dict:
+    def run(self, file_path: str, file_contents: str) -> dict:
         if not os.path.isabs(file_path):
             return {"execution_status": "error", "error_message": f"file_path must be absolute, got: {file_path}"}
         try:
-            abs_path = os.path.join(file_path, file_name)
-            with open(abs_path, "x") as f:
+            with open(file_path, "x") as f:
                 f.write(file_contents)
-            return {"execution_status": "success", "file_path": abs_path}
+            return {"execution_status": "success", "file_path": file_path}
         except FileExistsError:
-            return {"execution_status": "error", "error_message": f"File already exists: {abs_path}"}
+            return {"execution_status": "error", "error_message": f"File already exists: {file_path}"}
         except OSError as e:
             return {"execution_status": "error", "error_message": str(e)}
 
