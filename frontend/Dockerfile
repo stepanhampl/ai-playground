@@ -10,4 +10,4 @@ RUN mkdir -p /workspace
 COPY backend/ backend/
 COPY frontend/ frontend/
 
-CMD ["uvicorn", "frontend.server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
