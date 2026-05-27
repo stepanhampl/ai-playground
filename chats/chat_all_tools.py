@@ -28,7 +28,7 @@ messages = []
 
 while True:
     try:
-        user_input = input("You: ")
+        user_input = input("\033[1;32mYou\033[0m: ")
     except (KeyboardInterrupt, EOFError):
         break
 
@@ -50,7 +50,7 @@ while True:
         messages.append(llm_reply)
 
         if not llm_reply.tool_calls:
-            print(f"AI: {llm_reply.content}")
+            print(f"\033[1;31mAI\033[0m: {llm_reply.content}")
             break
 
         for tool_call in llm_reply.tool_calls:
