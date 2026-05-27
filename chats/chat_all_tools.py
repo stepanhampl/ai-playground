@@ -27,7 +27,7 @@ tools_by_name = {tool.name: tool for tool in tool_instances}
 messages = [
     {
         "role": "system",
-        "content": f"The script was called from (current folder/workspace is): {os.path.abspath(os.getcwd())}",
+        "content": "Your workspace for all file operations is /workspace. Use only paths under /workspace/ when creating or editing files.",
     }
 ]
 

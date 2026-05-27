@@ -2,3 +2,5 @@
 /prompt.json
 /response.json
 __pycache__/
+/workspace/*
+!/workspace/.gitkeep
