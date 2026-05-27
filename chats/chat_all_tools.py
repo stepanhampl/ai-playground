@@ -24,7 +24,12 @@ tool_instances = [ToolClass() for ToolClass in ALL_TOOLS]
 tools_api = [tool.to_api() for tool in tool_instances]
 tools_by_name = {tool.name: tool for tool in tool_instances}
 
-messages = []
+messages = [
+    {
+        "role": "system",
+        "content": f"The script was called from (current folder/workspace is): {os.path.abspath(os.getcwd())}",
+    }
+]
 
 while True:
     try:

@@ -11,7 +11,7 @@ class CreateFile(Tool):
         "properties": {
             "file_path": {
                 "type": "string",
-                "description": "Path (either absolute or relative), where the file will be located."
+                "description": "Absolute, where the file will be located."
             },
             "file_name": {
                 "type": "string",
@@ -46,8 +46,10 @@ class CreateFile(Tool):
     when_not_to_use: str = "Do not use when you want to edit existing file."
 
     def run(self, file_path: str, file_name: str, file_contents: str) -> dict:
+        if not os.path.isabs(file_path):
+            return {"execution_status": "error", "error_message": f"file_path must be absolute, got: {file_path}"}
         try:
-            abs_path = os.path.abspath(os.path.join(file_path, file_name))
+            abs_path = os.path.join(file_path, file_name)
             with open(abs_path, "x") as f:
                 f.write(file_contents)
             return {"execution_status": "success", "file_path": abs_path}
