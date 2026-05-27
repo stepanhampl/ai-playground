@@ -17,9 +17,12 @@ class Tool:
         if self.returns:
             parts.append(f'What it returns: "{self.returns}"')
         return {
-            "name": self.name,
-            "description": " ".join(parts),
-            "input_schema": self.input_schema,
+            "type": "function",
+            "function": {
+                "name": self.name,
+                "description": " ".join(parts),
+                "parameters": self.input_schema,
+            },
         }
 
     @abstractmethod

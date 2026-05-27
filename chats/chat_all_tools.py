@@ -13,7 +13,7 @@ load_dotenv()
 
 api_key = os.environ["OPENROUTER_API_KEY"]
 model = os.environ.get("LLM_NAME")
-provider = os.environ.get("LLM_PROVIDER")
+providers = os.environ.get("LLM_PROVIDERS").split(",")
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
@@ -42,7 +42,8 @@ while True:
             model=model,
             messages=messages,
             tools=tools_api,
-            extra_body={"provider": {"order": [provider.capitalize()]}},
+            max_tokens=4096,
+            extra_body={"provider": {"order": providers, "allow_fallbacks": True}},
         )
 
         llm_reply = response.choices[0].message
@@ -54,6 +55,7 @@ while True:
 
         for tool_call in llm_reply.tool_calls:
             tool = tools_by_name[tool_call.function.name]
+            print(f"Using tool: {tool.name}...")
             arguments = json.loads(tool_call.function.arguments)
             result = tool.run(**arguments)
             messages.append({
