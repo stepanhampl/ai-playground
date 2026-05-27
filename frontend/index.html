@@ -64,11 +64,12 @@
     #header {
       display: flex;
       justify-content: flex-end;
+      gap: 8px;
       padding: 8px 16px;
       border-bottom: 1px solid var(--input-row-border);
     }
 
-    #dark-toggle {
+    #dark-toggle, #reset-btn {
       background: var(--toggle-bg);
       color: var(--toggle-color);
       border: none;
@@ -176,6 +177,7 @@
 <body>
   <div id="chat-container">
     <div id="header">
+      <button id="reset-btn">🗑 Reset memory</button>
       <button id="dark-toggle">🌙 Dark</button>
     </div>
     <div id="messages"></div>
@@ -190,6 +192,7 @@
     const inputEl = document.getElementById('input');
     const sendBtn = document.getElementById('send-btn');
     const darkToggle = document.getElementById('dark-toggle');
+    const resetBtn = document.getElementById('reset-btn');
 
     function applyDark(dark) {
       document.body.classList.toggle('dark', dark);
@@ -263,6 +266,12 @@
         inputEl.focus();
       }
     }
+
+    resetBtn.addEventListener('click', async () => {
+      if (!confirm('Reset conversation memory?')) return;
+      await fetch('/api/reset', { method: 'POST' });
+      messagesEl.innerHTML = '';
+    });
 
     sendBtn.addEventListener('click', sendMessage);
 

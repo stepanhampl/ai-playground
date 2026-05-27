@@ -76,6 +76,13 @@ async def send_message(req: MessageRequest):
             })
 
 
+@app.post("/api/reset")
+async def reset_memory():
+    global messages
+    messages = [SYSTEM_MESSAGE]
+    return {"ok": True}
+
+
 @app.get("/api/history")
 async def get_history():
     return {"messages": [m for m in messages if isinstance(m, dict)]}
