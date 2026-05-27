@@ -1,0 +1,58 @@
+import os
+
+from toolkit.Tool import Tool
+
+
+class CreateFile(Tool):
+    what_it_does = "Creates new file with contents."
+    when_to_use = "When you need to create any new file in your workflow."
+    input_schema = {
+        "type": "object",
+        "properties": {
+            "file_path": {
+                "type": "string",
+                "description": "Path (either absolute or relative), where the file will be located."
+            },
+            "file_name": {
+                "type": "string",
+                "description": "Name of the file being created."
+            },
+            "file_contents": {
+                "type": "string",
+                "description": "All the contents, which you want to put into the file (initialize the file with content). Empty string for empty file."
+            },
+        },
+        "required": ["file_path", "file_name", "file_contents"]
+    }
+    return_schema = {
+        "type": "object",
+        "properties": {
+            "execution_status": {
+                "type": "string",
+                "enum": ["success", "error"],
+                "description": "Flag saying whether the file was successfully created."
+            },
+            "error_message": {
+                "type": "string",
+                "description": "Explanation of the failure. Present only when execution_status is 'error'."
+            },
+            "file_path": {
+                "type": "string",
+                "description": "Absolute path of the new file created."
+            }
+        },
+        "required": ["execution_status"]
+    }
+    when_not_to_use: str = "Do not use when you want to edit existing file."
+
+    def run(self, file_path: str, file_name: str, file_contents: str) -> dict:
+        try:
+            abs_path = os.path.abspath(os.path.join(file_path, file_name))
+            with open(abs_path, "x") as f:
+                f.write(file_contents)
+            return {"execution_status": "success", "file_path": abs_path}
+        except FileExistsError:
+            return {"execution_status": "error", "error_message": f"File already exists: {abs_path}"}
+        except OSError as e:
+            return {"execution_status": "error", "error_message": str(e)}
+
