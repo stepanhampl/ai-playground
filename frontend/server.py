@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import sys
 
 sys.path.insert(0, "/app")
@@ -74,6 +75,21 @@ async def send_message(req: MessageRequest):
                 "tool_call_id": tool_call.id,
                 "content": str(result),
             })
+
+
+WORKSPACE = "/workspace"
+
+
+@app.post("/api/clear-workspace")
+async def clear_workspace():
+    for entry in os.scandir(WORKSPACE):
+        if entry.name == ".gitkeep":
+            continue
+        if entry.is_dir(follow_symlinks=False):
+            shutil.rmtree(entry.path)
+        else:
+            os.remove(entry.path)
+    return {"ok": True}
 
 
 @app.post("/api/reset")

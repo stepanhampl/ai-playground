@@ -177,6 +177,7 @@
 <body>
   <div id="chat-container">
     <div id="header">
+      <button id="clear-workspace-btn">📁 Clear workspace</button>
       <button id="reset-btn">🗑 Reset memory</button>
       <button id="dark-toggle">🌙 Dark</button>
     </div>
@@ -193,6 +194,7 @@
     const sendBtn = document.getElementById('send-btn');
     const darkToggle = document.getElementById('dark-toggle');
     const resetBtn = document.getElementById('reset-btn');
+    const clearWorkspaceBtn = document.getElementById('clear-workspace-btn');
 
     function applyDark(dark) {
       document.body.classList.toggle('dark', dark);
@@ -266,6 +268,11 @@
         inputEl.focus();
       }
     }
+
+    clearWorkspaceBtn.addEventListener('click', async () => {
+      if (!confirm('Clear all files in workspace/?')) return;
+      await fetch('/api/clear-workspace', { method: 'POST' });
+    });
 
     resetBtn.addEventListener('click', async () => {
       if (!confirm('Reset conversation memory?')) return;
