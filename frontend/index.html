@@ -7,14 +7,47 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg: #f0f2f5;
+      --container-bg: #fff;
+      --shadow: rgba(0,0,0,0.1);
+      --msg-ai-bg: #f0f2f5;
+      --msg-ai-color: #1c1e21;
+      --input-border: #ddd;
+      --input-row-border: #e4e6ea;
+      --input-row-bg: #fff;
+      --input-color: #1c1e21;
+      --tool-color: #888;
+      --thinking-color: #aaa;
+      --toggle-bg: #e4e6ea;
+      --toggle-color: #444;
+    }
+
+    body.dark {
+      --bg: #18191a;
+      --container-bg: #242526;
+      --shadow: rgba(0,0,0,0.4);
+      --msg-ai-bg: #3a3b3c;
+      --msg-ai-color: #e4e6eb;
+      --input-border: #555;
+      --input-row-border: #3a3b3c;
+      --input-row-bg: #242526;
+      --input-color: #e4e6eb;
+      --tool-color: #aaa;
+      --thinking-color: #777;
+      --toggle-bg: #3a3b3c;
+      --toggle-color: #e4e6eb;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f0f2f5;
+      background: var(--bg);
       height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      transition: background 0.2s;
     }
 
     #chat-container {
@@ -23,8 +56,27 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      background: #fff;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+      background: var(--container-bg);
+      box-shadow: 0 2px 16px var(--shadow);
+      transition: background 0.2s;
+    }
+
+    #header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--input-row-border);
+    }
+
+    #dark-toggle {
+      background: var(--toggle-bg);
+      color: var(--toggle-color);
+      border: none;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
     }
 
     #messages {
@@ -55,21 +107,21 @@
 
     .message.ai {
       align-self: flex-start;
-      background: #f0f2f5;
-      color: #1c1e21;
+      background: var(--msg-ai-bg);
+      color: var(--msg-ai-color);
       border-bottom-left-radius: 4px;
     }
 
     .tool-badge {
       font-size: 11px;
-      color: #888;
+      color: var(--tool-color);
       margin-bottom: 4px;
       align-self: flex-start;
     }
 
     .thinking {
       align-self: flex-start;
-      color: #aaa;
+      color: var(--thinking-color);
       font-size: 13px;
       font-style: italic;
       padding: 4px 0;
@@ -79,13 +131,14 @@
       display: flex;
       gap: 8px;
       padding: 12px 16px;
-      border-top: 1px solid #e4e6ea;
-      background: #fff;
+      border-top: 1px solid var(--input-row-border);
+      background: var(--input-row-bg);
+      transition: background 0.2s, border-color 0.2s;
     }
 
     #input {
       flex: 1;
-      border: 1px solid #ddd;
+      border: 1px solid var(--input-border);
       border-radius: 20px;
       padding: 10px 16px;
       font-size: 14px;
@@ -94,6 +147,9 @@
       line-height: 1.4;
       max-height: 120px;
       overflow-y: auto;
+      background: var(--container-bg);
+      color: var(--input-color);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
 
     #input:focus { border-color: #0084ff; }
@@ -119,6 +175,9 @@
 </head>
 <body>
   <div id="chat-container">
+    <div id="header">
+      <button id="dark-toggle">🌙 Dark</button>
+    </div>
     <div id="messages"></div>
     <div id="input-row">
       <textarea id="input" rows="1" placeholder="Type a message…"></textarea>
@@ -130,6 +189,22 @@
     const messagesEl = document.getElementById('messages');
     const inputEl = document.getElementById('input');
     const sendBtn = document.getElementById('send-btn');
+    const darkToggle = document.getElementById('dark-toggle');
+
+    function applyDark(dark) {
+      document.body.classList.toggle('dark', dark);
+      darkToggle.textContent = dark ? '☀️ Light' : '🌙 Dark';
+    }
+
+    const prefersDark = localStorage.getItem('darkMode') === 'true' ||
+      (localStorage.getItem('darkMode') === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    applyDark(prefersDark);
+
+    darkToggle.addEventListener('click', () => {
+      const dark = !document.body.classList.contains('dark');
+      localStorage.setItem('darkMode', dark);
+      applyDark(dark);
+    });
 
     function appendMessage(role, text) {
       const el = document.createElement('div');
