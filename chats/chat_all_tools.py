@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from toolkit.all_tools import ALL_TOOLS
+from backend.toolkit.all_tools import ALL_TOOLS
 
 load_dotenv()
 

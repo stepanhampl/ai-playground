@@ -1,6 +1,6 @@
 import os
 
-from toolkit.Tool import Tool
+from backend.toolkit.Tool import Tool
 
 
 class EditFile(Tool):
