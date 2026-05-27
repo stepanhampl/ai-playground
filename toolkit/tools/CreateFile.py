@@ -31,10 +31,6 @@ class CreateFile(Tool):
             "error_message": {
                 "type": "string",
                 "description": "Explanation of the failure. Present only when execution_status is 'error'."
-            },
-            "file_path": {
-                "type": "string",
-                "description": "Absolute path of the new file created."
             }
         },
         "required": ["execution_status"]
