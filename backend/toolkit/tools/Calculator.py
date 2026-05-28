@@ -1,5 +1,4 @@
 from typing import Any
-from backend.exceptions import InvalidToolCall
 from backend.toolkit.Tool import Tool
 
 
@@ -43,7 +42,11 @@ class Calculator(Tool):
         elif operation == "subtract": result = operand1 - operand2
         elif operation == "multiply": result = operand1 * operand2
         elif operation == "divide": result = operand1 / operand2
-        else: raise InvalidToolCall()
-        
+        else:
+            return {
+                "error": f"Unknown operation '{operation}'. Use add, subtract, multiply, or divide.",
+                "result": None
+            }
+
         return {"result": result}
         
