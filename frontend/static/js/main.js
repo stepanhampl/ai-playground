@@ -1,11 +1,11 @@
-import { apiSendMessage, apiReset, apiClearWorkspace } from './api.js';
+import { apiSendMessage, apiClearWorkspace } from './api.js';
 import { appendMessage, appendThinking, appendToolBadge, clearMessages } from './messages.js';
 import { initTheme } from './theme.js';
-import { initSidebar, loadChats, resetCurrentChat } from './sidebar.js';
+import { initSidebar, loadChats } from './sidebar.js';
 
 const inputEl = document.getElementById('input');
 const sendBtn = document.getElementById('send-btn');
-const resetBtn = document.getElementById('reset-btn');
+
 const clearWorkspaceBtn = document.getElementById('clear-workspace-btn');
 
 async function sendMessage() {
@@ -53,14 +53,6 @@ inputEl.addEventListener('input', () => {
 clearWorkspaceBtn.addEventListener('click', async () => {
     if (!confirm('Clear all files in workspace/?')) return;
     await apiClearWorkspace();
-});
-
-resetBtn.addEventListener('click', async () => {
-    if (!confirm('Reset conversation memory?')) return;
-    await apiReset();
-    resetCurrentChat();
-    clearMessages();
-    loadChats();
 });
 
 initTheme();
