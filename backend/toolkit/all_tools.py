@@ -4,7 +4,7 @@ from backend.toolkit.tools.Calculator import Calculator
 from backend.toolkit.tools.CreateFile import CreateFile
 from backend.toolkit.tools.ReadFile import ReadFile
 
-ALL_TOOLS: list[Tool] = [
+ALL_TOOLS: list[type[Tool]] = [
     Calculator,
     CreateFile,
     EditFileByDiff,

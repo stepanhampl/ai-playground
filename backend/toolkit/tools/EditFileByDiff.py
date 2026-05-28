@@ -45,7 +45,11 @@ class EditFileByDiff(Tool):
     }
     when_not_to_use: str = "Do not use when you want to create existing file."
 
-    def run(self, file_path: str, string_to_replace: str, new_string: str, replace_all: bool = False) -> dict[str, str]:
+    def run(self, **kwargs) -> dict[str, str]:
+        file_path: str = kwargs["file_path"]
+        string_to_replace: str = kwargs["string_to_replace"]
+        new_string: str = kwargs["new_string"]
+        replace_all: bool = kwargs.get("replace_all", False)
         with open(file_path, 'r') as file:
             content = file.read()
             

@@ -1,7 +1,7 @@
 from backend.database import get_db, now_iso
 
 
-def create(title: str) -> int:
+def create(title: str) -> int | None:
     ts = now_iso()
     with get_db() as conn:
         cursor = conn.execute(

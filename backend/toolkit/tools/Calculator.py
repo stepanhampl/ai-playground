@@ -1,3 +1,4 @@
+from typing import Any
 from backend.exceptions import InvalidToolCall
 from backend.toolkit.Tool import Tool
 
@@ -34,9 +35,10 @@ class Calculator(Tool):
         },
         "required": ["result"]
     }
-    when_not_to_use = None
-    
-    def run(self, operation: str, operand1: int|float, operand2: int|float) -> dict[str, int|float]:        
+    def run(self, **kwargs) -> Any:
+        operation: str = kwargs["operation"]
+        operand1: int|float = kwargs["operand1"]
+        operand2: int|float = kwargs["operand2"]
         if operation == "add": result = operand1 + operand2
         elif operation == "subtract": result = operand1 - operand2
         elif operation == "multiply": result = operand1 * operand2

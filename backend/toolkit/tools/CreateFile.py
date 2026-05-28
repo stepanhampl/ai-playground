@@ -37,7 +37,9 @@ class CreateFile(Tool):
     }
     when_not_to_use: str = "Do not use when you want to edit existing file."
 
-    def run(self, file_path: str, file_contents: str) -> dict:
+    def run(self, **kwargs) -> dict:
+        file_path: str = kwargs["file_path"]
+        file_contents: str = kwargs["file_contents"]
         if not os.path.isabs(file_path):
             return {"execution_status": "error", "error_message": f"file_path must be absolute, got: {file_path}"}
         try:

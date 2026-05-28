@@ -20,6 +20,7 @@ def _record_user_message(content: str):
     state.messages.append({"role": "user", "content": content})
     if state.current_chat_id is None:
         state.current_chat_id = chats_repo.create(content[:60])
+        assert state.current_chat_id is not None
     messages_repo.save_msg(state.current_chat_id, {"role": "user", "content": content})
 
 
@@ -34,11 +35,13 @@ def _call_llm():
 
 
 def _execute_tool_call(tool_call) -> str:
+    assert state.current_chat_id is not None
+    chat_id: int = state.current_chat_id
     tool = tools_by_name[tool_call.function.name]
     result = tool.run(**json.loads(tool_call.function.arguments))
     tool_msg = {"role": "tool", "tool_call_id": tool_call.id, "content": str(result)}
     state.messages.append(tool_msg)
-    messages_repo.save_msg(state.current_chat_id, tool_msg)
+    messages_repo.save_msg(chat_id, tool_msg)
     return tool.name
 
 
@@ -53,7 +56,8 @@ def _llm_reply_to_dict(llm_reply) -> dict:
 
 
 def _run_llm_loop() -> tuple[str, list[str]]:
-    tool_calls_log = []
+    tool_calls_log: list[str] = []
+    assert state.current_chat_id is not None
     while True:
         llm_reply = _call_llm()
         llm_reply_dict = _llm_reply_to_dict(llm_reply)

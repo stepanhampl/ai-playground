@@ -58,15 +58,14 @@ class ReadFile(Tool):
         },
         "required": ["execution_status"]
     }
-    when_not_to_use: str = None
-
-    
-    def run(self, file_path: str, return_type: str) -> dict:
+    def run(self, **kwargs) -> dict:
+        file_path: str = kwargs["file_path"]
+        return_type: str = kwargs["return_type"]
         if return_type == "array":
             return self.read_file_array(file_path)
         return self.read_file_string(file_path)
 
-    def read_file_string(self, file_path: str) -> dict[str, str]:
+    def read_file_string(self, file_path: str) -> dict:
         if not os.path.isabs(file_path):
             return {"execution_status": "error", "message": f"file_path must be absolute, got: {file_path}"}
         try:
