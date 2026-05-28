@@ -1,3 +1,4 @@
+from typing import Any
 import os
 
 from backend.toolkit.Tool import Tool
@@ -37,7 +38,7 @@ class CreateFile(Tool):
     }
     when_not_to_use: str = "Do not use when you want to edit existing file."
 
-    def run(self, **kwargs) -> dict:
+    def run(self, **kwargs: Any) -> dict[str, Any]:
         file_path: str = kwargs["file_path"]
         file_contents: str = kwargs["file_contents"]
         if not os.path.isabs(file_path):

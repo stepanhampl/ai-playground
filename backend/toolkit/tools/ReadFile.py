@@ -1,3 +1,4 @@
+from typing import Any
 import os
 
 from backend.toolkit.Tool import Tool
@@ -58,14 +59,14 @@ class ReadFile(Tool):
         },
         "required": ["execution_status"]
     }
-    def run(self, **kwargs) -> dict:
+    def run(self, **kwargs: Any) -> dict[str, Any]:
         file_path: str = kwargs["file_path"]
         return_type: str = kwargs["return_type"]
         if return_type == "array":
             return self.read_file_array(file_path)
         return self.read_file_string(file_path)
 
-    def read_file_string(self, file_path: str) -> dict:
+    def read_file_string(self, file_path: str) -> dict[str, Any]:
         if not os.path.isabs(file_path):
             return {"execution_status": "error", "message": f"file_path must be absolute, got: {file_path}"}
         try:
@@ -77,7 +78,7 @@ class ReadFile(Tool):
         except OSError as e:
             return {"execution_status": "error", "message": str(e)}
 
-    def read_file_array(self, file_path: str) -> dict:
+    def read_file_array(self, file_path: str) -> dict[str, Any]:
         if not os.path.isabs(file_path):
             return {"execution_status": "error", "message": f"file_path must be absolute, got: {file_path}"}
         try:

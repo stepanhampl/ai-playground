@@ -1,3 +1,4 @@
+from typing import Any
 import os
 
 from backend.toolkit.Tool import Tool
@@ -45,7 +46,7 @@ class EditFileByDiff(Tool):
     }
     when_not_to_use: str = "Do not use when you want to create existing file."
 
-    def run(self, **kwargs) -> dict[str, str]:
+    def run(self, **kwargs: Any) -> dict[str, str]:
         file_path: str = kwargs["file_path"]
         string_to_replace: str = kwargs["string_to_replace"]
         new_string: str = kwargs["new_string"]

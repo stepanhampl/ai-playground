@@ -15,7 +15,7 @@ def get_db() -> sqlite3.Connection:
     return conn
 
 
-def init_db():
+def init_db() -> None:
     with get_db() as conn:
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS chats (

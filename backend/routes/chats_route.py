@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -11,12 +12,12 @@ router = APIRouter()
 
 
 @router.get("/api/chats")
-async def list_chats():
+async def list_chats() -> dict[str, list[dict[str, Any]]]:
     return {"chats": chats_repo.list_all()}
 
 
 @router.delete("/api/chats/{chat_id}")
-async def delete_chat(chat_id: int):
+async def delete_chat(chat_id: int) -> dict[str, bool]:
     chats_repo.delete_by_id(chat_id)
     if state.current_chat_id == chat_id:
         state.reset()
@@ -24,7 +25,7 @@ async def delete_chat(chat_id: int):
 
 
 @router.post("/api/chats/{chat_id}/restore")
-async def restore_chat(chat_id: int):
+async def restore_chat(chat_id: int) -> dict[str, list[dict[str, Any]]]:
     if not chats_repo.get_by_id(chat_id):
         raise HTTPException(status_code=404, detail="Chat not found")
 

@@ -8,8 +8,8 @@ class Tool:
     input_schema: dict[str, Any]
     return_schema: dict[str, Any]
     when_not_to_use: str = ""
-    
-    def to_api(self) -> dict:
+
+    def to_api(self) -> dict[str, Any]:
         parts = [f'What it does: "{self.what_it_does}"', f'When to use: "{self.when_to_use}"']
         if self.when_not_to_use:
             parts.append(f'When not to use: "{self.when_not_to_use}"')
@@ -25,8 +25,7 @@ class Tool:
         }
 
     @abstractmethod
-    def run(self, **kwargs) -> Any:
-        ...
+    def run(self, **kwargs: Any) -> Any: ...
 
     @property
     def name(self) -> str:

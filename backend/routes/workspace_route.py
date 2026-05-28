@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/api/clear-workspace")
-async def clear_workspace():
+async def clear_workspace() -> dict[str, bool]:
     for entry in os.scandir(WORKSPACE):
         if entry.name == ".gitkeep":
             continue

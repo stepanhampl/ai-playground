@@ -35,7 +35,7 @@ class Calculator(Tool):
         },
         "required": ["result"]
     }
-    def run(self, **kwargs) -> Any:
+    def run(self, **kwargs: Any) -> Any:
         operation: str = kwargs["operation"]
         operand1: int|float = kwargs["operand1"]
         operand2: int|float = kwargs["operand2"]

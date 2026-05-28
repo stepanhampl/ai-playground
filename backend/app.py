@@ -20,6 +20,6 @@ app.include_router(workspace_route.router)
 
 
 @app.get("/")
-async def index():
+async def index() -> HTMLResponse:
     with open("/app/frontend/index.html") as f:
         return HTMLResponse(f.read())
