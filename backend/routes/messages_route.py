@@ -31,7 +31,6 @@ def _call_llm() -> Any:
         model=cast(Any, model_arg),
         messages=cast(Any, state.messages),
         tools=cast(Any, tools_api),
-        max_tokens=4096,
         extra_body={"provider": {"order": LLM_PROVIDERS, "allow_fallbacks": True}},
     ).choices[0].message
 
