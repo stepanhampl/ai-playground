@@ -1,10 +1,12 @@
 from backend.toolkit.Tool import Tool
-from backend.toolkit.tools.EditFile import EditFile
+from backend.toolkit.tools.EditFileByDiff import EditFileByDiff
 from backend.toolkit.tools.Calculator import Calculator
 from backend.toolkit.tools.CreateFile import CreateFile
+from backend.toolkit.tools.ReadFile import ReadFile
 
 ALL_TOOLS: list[Tool] = [
     Calculator,
     CreateFile,
-    EditFile
+    EditFileByDiff,
+    ReadFile,
 ]

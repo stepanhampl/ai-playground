@@ -3,7 +3,7 @@ import os
 from backend.toolkit.Tool import Tool
 
 
-class EditFile(Tool):
+class EditFileByDiff(Tool):
     what_it_does = "Edits existing file. Works by replacing existing string by new one."
     when_to_use = "When you need to edit any file in your workflow."
     input_schema = {
