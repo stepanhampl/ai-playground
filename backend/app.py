@@ -1,4 +1,5 @@
 import sys
+import time
 
 sys.path.insert(0, "/app")
 
@@ -18,8 +19,17 @@ app.include_router(messages_route.router)
 app.include_router(chats_route.router)
 app.include_router(workspace_route.router)
 
+_BUILD_TS = int(time.time())
+
 
 @app.get("/")
 async def index() -> HTMLResponse:
     with open("/app/frontend/index.html") as f:
-        return HTMLResponse(f.read())
+        html = f.read().replace(
+            'src="/static/js/main.js"',
+            f'src="/static/js/main.js?v={_BUILD_TS}"',
+        ).replace(
+            'href="/static/css/style.css"',
+            f'href="/static/css/style.css?v={_BUILD_TS}"',
+        )
+    return HTMLResponse(html, headers={"Cache-Control": "no-store"})
