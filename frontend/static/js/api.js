@@ -4,7 +4,20 @@ export async function apiSendMessage(content) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
     });
-    return res.json();
+    if (!res.ok) {
+        let detail = `Server error ${res.status}`;
+        try {
+            const body = await res.json();
+            if (body.detail) detail = body.detail;
+            else if (body.error) detail = body.error;
+        } catch (_) {}
+        throw new Error(detail);
+    }
+    try {
+        return await res.json();
+    } catch (_) {
+        throw new Error('Invalid response from server (not JSON)');
+    }
 }
 
 export async function apiListChats() {

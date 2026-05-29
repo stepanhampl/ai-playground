@@ -207,6 +207,20 @@ body {
   border-bottom-left-radius: 4px;
 }
 
+.message.error {
+  align-self: flex-start;
+  background: #fdecea;
+  color: #c0392b;
+  border-bottom-left-radius: 4px;
+  border-left: 3px solid #e74c3c;
+}
+
+body.dark .message.error {
+  background: #3b1a1a;
+  color: #f1948a;
+  border-left-color: #e74c3c;
+}
+
 .tool-badge {
   font-size: 11px;
   color: var(--tool-color);

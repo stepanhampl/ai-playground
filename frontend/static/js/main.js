@@ -26,9 +26,10 @@ async function sendMessage() {
         appendToolBadge(data.tool_calls || []);
         appendMessage('ai', data.content || '(no response)');
         await loadChats();
+        console.log("try")
     } catch (err) {
         thinking.remove();
-        appendMessage('ai', 'Error: ' + err.message);
+        appendMessage('error', err.message);
     } finally {
         sendBtn.disabled = false;
         inputEl.disabled = false;
