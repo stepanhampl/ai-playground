@@ -1,10 +1,10 @@
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 
-export async function setup(page) {
+export async function setup(page: Page): Promise<void> {
   await page.goto('/');
 }
 
-export async function sendMessage(page, message) {
+export async function sendMessage(page: Page, message: string): Promise<void> {
   const input = page.locator('#input');
   await expect(input).toBeVisible();
   await input.fill(message);
@@ -17,7 +17,7 @@ export async function sendMessage(page, message) {
  * Polls every 500ms (1000ms while a `.thinking` indicator is visible).
  * Throws if the condition is not met within 60 seconds.
  */
-export async function waitForMessage(page, locatorClass, minCount) {
+export async function waitForMessage(page: Page, locatorClass: string, minCount: number): Promise<string> {
   const messagesContainer = page.locator('#messages');
   const resultLocator = messagesContainer.locator(locatorClass);
 
@@ -26,10 +26,10 @@ export async function waitForMessage(page, locatorClass, minCount) {
     if (await resultLocator.count() >= minCount) {
       const text = await resultLocator.last().textContent();
       console.log(`Last (#${minCount}) message (${locatorClass}):`, text);
-      return text;
+      return text ?? '';
     }
 
-    const hasThinking = await messagesContainer.locator('.thinking').count() > 0;
+    const hasThinking = (await messagesContainer.locator('.thinking').count()) > 0;
     await page.waitForTimeout(hasThinking ? 1000 : 500);
   }
 
