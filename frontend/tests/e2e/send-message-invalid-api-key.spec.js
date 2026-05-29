@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { sendMessageAndWaitFor } from './helpers.js';
+import { setup, sendMessage, waitForMessage } from './helpers/index.js';
 
 test('test error shown when API key is invalid', async ({ page }) => {
   // Simulate an invalid OPENROUTER_API_KEY by intercepting the backend call
@@ -14,6 +14,8 @@ test('test error shown when API key is invalid', async ({ page }) => {
     });
   });
 
-  const text = await sendMessageAndWaitFor(page, 'Hello AI, this is a test.', '.message.error');
+  await setup(page);
+  await sendMessage(page, 'Hello AI, this is a test.');
+  const text = await waitForMessage(page, '.message.error', 1);
   expect(text).toBeTruthy();
 });
