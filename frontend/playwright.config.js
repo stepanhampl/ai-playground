@@ -6,5 +6,6 @@ export default defineConfig({
   use: {
     baseURL: 'http://0.0.0.0:8000',
     headless: true,
+    channel: 'chrome',
   },
 });
