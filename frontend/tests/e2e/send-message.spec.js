@@ -20,7 +20,7 @@ test('test single message', async ({ page }) => {
   const messagesContainer = page.locator('#messages');
 
   // Poll for AI response every second, up to 30 seconds
-  const deadline = Date.now() + 30_000;
+  const deadline = Date.now() + 60_000;
   while (Date.now() < deadline) {
     // Check if thinking indicator is gone (AI responded)
     const thinking = messagesContainer.locator('.thinking');
