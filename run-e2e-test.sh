@@ -3,6 +3,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 FE_DIR="$SCRIPT_DIR/frontend"
+ROOT_DIR="$SCRIPT_DIR"
 
 echo "=== E2E Test Runner ==="
 echo ""
@@ -18,16 +19,29 @@ if ! command -v npx &> /dev/null; then
     exit 1
 fi
 
+# Check .env file
+if [ ! -f "$ROOT_DIR/.env" ]; then
+    echo "ERROR: .env file not found at $ROOT_DIR/.env"
+    echo "Create it with:"
+    echo "  OPENROUTER_API_KEY=<your-key>"
+    echo "  LLM_PROVIDERS=Fireworks,Morph"
+    echo "  LLM_NAME=minimax/minimax-m2.7"
+    exit 1
+fi
+
 cd "$FE_DIR"
 
-# Install dependencies
-echo "Installing dependencies..."
+# Install npm dependencies
+echo "Installing frontend dependencies..."
 npm install
 
 # Install Playwright browsers
 echo "Installing Playwright browsers..."
 npx playwright install
 
-# Run the test
-echo "Running e2e test..."
+# Run the full test via docker compose
+echo "Starting services and running e2e test..."
 npm run test:e2e
+
+echo ""
+echo "=== E2E Test Complete ==="
