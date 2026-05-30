@@ -30,7 +30,7 @@ export async function apiSendMessage(content: string): Promise<SendMessageRespon
             const body = await res.json();
             if (body.detail) detail = body.detail;
             else if (body.error) detail = body.error;
-        } catch (_) { /* ignore */ }
+        } catch (_) { /* non-JSON error body (e.g. proxy 502); fall back to generic message */ }
         throw new Error(detail);
     }
     try {
