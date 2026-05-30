@@ -4,9 +4,11 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node", "react", "react-dom"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
-  "include": ["tests/**/*.ts", "playwright.config.ts"]
+  "include": ["src/**/*", "tests/**/*.ts", "playwright.config.ts"]
 }
