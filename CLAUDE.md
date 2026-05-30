@@ -83,8 +83,7 @@ docker compose down
 
 ```bash
 cd /root/ai-playground
-export OPENAI_API_KEY=... ANTHROPIC_API_KEY=...
-cd backend && uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
+export OPENAI_API_KEY=*** ANTHROPIC_API_KEY=*** backend && uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### Frontend dev server (Vite)
@@ -95,55 +94,29 @@ cd /root/ai-playground/frontend && npm install && npm run dev
 
 ---
 
-## Testing
+## Testing — Always Run ALL Tests
 
-### Vitest Unit Tests
+**Never run individual tests. Always run the full suite in this order:**
+
+### 1. Type check (Python)
+
+```bash
+cd /root/ai-playground && mypy backend --explicit-package-bases --strict
+```
+
+### 2. Vitest unit tests
 
 ```bash
 cd /root/ai-playground/frontend && npx vitest run
 ```
 
-Test file: `frontend/tests/api.test.js`
-
-Key patterns in existing tests:
-- Mock `global.fetch` with `vi.fn()`
-- `vi.resetModules()` for fresh module state per test
-- Dynamic import: `await import('../src/api/index.js')`
-
-### Playwright E2E Tests
+### 3. Playwright E2E tests — ALWAYS use `run-e2e-test.sh`
 
 ```bash
-cd /root/ai-playground/frontend
-npm install
-npx playwright install chromium
-docker compose -f ../docker-compose.yml up --build -d
-sleep 5
-npx playwright test
-docker compose -f ../docker-compose.yml down
+cd /root/ai-playground && ./run-e2e-test.sh
 ```
 
-Or use the wrapper:
-```bash
-./run-e2e-test.sh
-```
-
-**Important:** Playwright `baseURL` is `http://0.0.0.0:8000` (docker port mapping) — not `localhost:8000`.
-
-E2E helpers: `frontend/tests/e2e/helpers/*.ts`
-
-### Type Checking (Python)
-
-From project root:
-```bash
-cd /root/ai-playground && mypy backend --explicit-package-bases
-```
-
-Strict mode:
-```bash
-cd /root/ai-playground && mypy backend --explicit-package-bases --strict
-```
-
-**Note:** Always run from project root. Running from inside `backend/` causes import resolution failures.
+**Never** run individual E2E specs. **Never** run `npx playwright test` directly. Always use the wrapper script.
 
 ---
 
@@ -155,22 +128,4 @@ cd /root/ai-playground && mypy backend --explicit-package-bases --strict
 4. **API module is ESM:** `frontend/src/api/index.js`
 5. **Vitest mocking:** `vi.resetModules()` + dynamic `import()` bypasses module caching
 6. **Two docker services:** `app` (backend-only) and `frontend` (full stack) — `frontend` exposes port 8000
-
----
-
-## Common Commands
-
-```bash
-# Type check
-mypy backend --explicit-package-bases --strict
-
-# Unit tests
-cd frontend && npx vitest run
-
-# E2E tests (requires Docker)
-./run-e2e-test.sh
-
-# Docker
-docker compose up --build
-docker compose down
-```
+7. **Playwright baseURL:** Must be `http://0.0.0.0:8000` (docker port mapping), not `localhost:8000`
