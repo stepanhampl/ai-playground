@@ -18,6 +18,17 @@ export async function sendMessage(page: Page, message: string): Promise<void> {
  * Polls every 500ms (1000ms while a `.thinking` indicator is visible).
  * Throws if the condition is not met within 60 seconds.
  */
+export async function waitForResponseOrError(page: Page): Promise<void> {
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    const isDisabled = await page.locator('#send-btn').isDisabled();
+    if (!isDisabled) return;
+    const errorCount = await page.locator('#messages .message.error').count();
+    if (errorCount > 0) return;
+    await page.waitForTimeout(500);
+  }
+}
+
 export async function waitForMessage(page: Page, locatorClass: string, minCount: number): Promise<string> {
   const messagesContainer = page.locator('#messages');
   const resultLocator = messagesContainer.locator(locatorClass);
