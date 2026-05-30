@@ -15,7 +15,6 @@ services:
     volumes:
       - ./workspace:/workspace
       - ./backend:/app/backend
-      - ./frontend:/app/frontend
       - ./.env:/app/.env:ro
     ports:
       - "8000:8000"
