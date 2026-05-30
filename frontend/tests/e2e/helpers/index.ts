@@ -3,6 +3,7 @@ import { expect } from '@playwright/test';
 
 export async function setup(page: any): Promise<void> {
   await page.goto('/');
+  await page.request.post('/api/reset');
 }
 
 export async function sendMessage(page: any, message: string): Promise<void> {
