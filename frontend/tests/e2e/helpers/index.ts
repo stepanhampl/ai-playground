@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 
-export async function setup(page: any): Promise<void> {
+export async function setup(page: Page): Promise<void> {
   await page.goto('/');
   await page.request.post('/api/reset');
 }
 
-export async function sendMessage(page: any, message: string): Promise<void> {
+export async function sendMessage(page: Page, message: string): Promise<void> {
   const input = page.locator('#input');
   await expect(input).toBeVisible();
   await input.fill(message);
@@ -19,7 +19,7 @@ export async function sendMessage(page: any, message: string): Promise<void> {
  * Polls every 500ms (1000ms while a `.thinking` indicator is visible).
  * Throws if the condition is not met within 60 seconds.
  */
-export async function waitForMessage(page: any, locatorClass: string, minCount: number): Promise<string> {
+export async function waitForMessage(page: Page, locatorClass: string, minCount: number): Promise<string> {
   const messagesContainer = page.locator('#messages');
   const resultLocator = messagesContainer.locator(locatorClass);
 
