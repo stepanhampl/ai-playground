@@ -1,7 +1,8 @@
-import { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import { useState, useEffect, useImperativeHandle, forwardRef, ForwardedRef } from 'react';
 import { apiListChats, apiRestoreChat, apiDeleteChat } from '../api/index.js';
+import type { Chat } from '../types.js';
 
-function relativeTime(isoStr) {
+function relativeTime(isoStr: string): string {
     const date = new Date(isoStr);
     const diffMs = Date.now() - date.getTime();
     const mins = Math.floor(diffMs / 60000);
@@ -14,16 +15,29 @@ function relativeTime(isoStr) {
     return date.toLocaleDateString();
 }
 
-function escapeHtml(str) {
+function escapeHtml(str: string): string {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-const Sidebar = forwardRef(function Sidebar({ currentChatId, onSelectChat, onNewChat }, ref) {
-    const [chats, setChats] = useState([]);
+interface SidebarProps {
+    currentChatId: string | null;
+    onSelectChat: (id: string, messages: Array<{ role: 'user' | 'ai'; content: string }>) => void;
+    onNewChat: () => void;
+}
+
+export interface SidebarHandle {
+    reloadChats: () => Promise<void>;
+}
+
+const Sidebar = forwardRef<SidebarHandle, SidebarProps>(function Sidebar(
+    { currentChatId, onSelectChat, onNewChat },
+    ref: ForwardedRef<SidebarHandle>
+) {
+    const [chats, setChats] = useState<Chat[]>([]);
 
     async function loadChats() {
         const data = await apiListChats();
-        setChats(data.chats || []);
+        setChats(data.chats ?? []);
     }
 
     useEffect(() => {
@@ -32,18 +46,24 @@ const Sidebar = forwardRef(function Sidebar({ currentChatId, onSelectChat, onNew
 
     useImperativeHandle(ref, () => ({ reloadChats: loadChats }), []);
 
-    async function handleRestore(id) {
+    async function handleRestore(id: string) {
         const data = await apiRestoreChat(id);
         if (!data) return;
-        onSelectChat(id, data.messages || []);
+        onSelectChat(
+            id,
+            (data.messages ?? []).map(m => ({
+                role: (m.role === 'user' ? 'user' : 'ai') as 'user' | 'ai',
+                content: m.content ?? '',
+            }))
+        );
     }
 
-    async function handleDelete(e, id) {
+    async function handleDelete(e: React.MouseEvent, id: string) {
         e.stopPropagation();
         if (!confirm('Delete this chat?')) return;
         await apiDeleteChat(id);
         if (currentChatId === id) {
-            onSelectChat(null, []);
+            onSelectChat('', []);
         }
         loadChats();
     }
@@ -54,17 +74,26 @@ const Sidebar = forwardRef(function Sidebar({ currentChatId, onSelectChat, onNew
                 <button id="new-chat-btn" onClick={onNewChat}>+ New Chat</button>
             </div>
             <div id="chat-list">
-                {chats.map(chat => (
+                {chats.map((chat) => (
                     <div
                         key={chat.id}
                         className={`chat-item${chat.id === currentChatId ? ' active' : ''}`}
                         onClick={() => handleRestore(chat.id)}
                     >
                         <div className="chat-item-text">
-                            <div className="chat-item-title" dangerouslySetInnerHTML={{ __html: escapeHtml(chat.title) }} />
+                            <div
+                                className="chat-item-title"
+                                dangerouslySetInnerHTML={{ __html: escapeHtml(chat.title) }}
+                            />
                             <div className="chat-item-date">{relativeTime(chat.updated_at)}</div>
                         </div>
-                        <button className="chat-delete-btn" title="Delete" onClick={(e) => handleDelete(e, chat.id)}>✕</button>
+                        <button
+                            className="chat-delete-btn"
+                            title="Delete"
+                            onClick={(e) => handleDelete(e, chat.id)}
+                        >
+                            ✕
+                        </button>
                     </div>
                 ))}
             </div>

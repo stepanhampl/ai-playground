@@ -1,21 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ChangeEvent, KeyboardEvent } from 'react';
 import { apiSendMessage, apiClearWorkspace } from '../api/index.js';
 import { useDarkMode } from '../context/DarkModeContext.jsx';
+import type { Message } from '../types.js';
 
-export default function ChatContainer({ currentChatId, messages, onMessagesChange }) {
+interface ChatContainerProps {
+    currentChatId: string | null;
+    messages: Message[];
+    onMessagesChange: React.Dispatch<React.SetStateAction<Message[]>>;
+}
+
+export default function ChatContainer({
+    currentChatId,
+    messages,
+    onMessagesChange,
+}: ChatContainerProps) {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showThinking, setShowThinking] = useState(false);
-    const [toolCalls, setToolCalls] = useState([]);
-    const messagesEndRef = useRef(null);
-    const inputRef = useRef(null);
+    const [toolCalls, setToolCalls] = useState<string[]>([]);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
     const { isDark, toggleDark } = useDarkMode();
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, showThinking]);
 
-    function appendMessage(role, text) {
+    function appendMessage(role: Message['role'], text: string) {
         onMessagesChange(prev => [...prev, { role, text }]);
     }
 
@@ -27,32 +38,34 @@ export default function ChatContainer({ currentChatId, messages, onMessagesChang
         setIsLoading(true);
         setShowThinking(true);
         setToolCalls([]);
-        inputRef.current.style.height = 'auto';
+        if (inputRef.current) inputRef.current.style.height = 'auto';
 
         appendMessage('user', content);
 
         try {
             const data = await apiSendMessage(content);
             setShowThinking(false);
-            setToolCalls(data.tool_calls || []);
-            appendMessage('ai', data.content || '(no response)');
-        } catch (err) {
+            setToolCalls(data.tool_calls ?? []);
+            appendMessage('ai', data.content ?? '(no response)');
+        } catch (err: unknown) {
             setShowThinking(false);
-            appendMessage('error', err.message);
+            const message = err instanceof Error ? err.message : String(err);
+            appendMessage('error', message);
         } finally {
             setIsLoading(false);
             inputRef.current?.focus();
         }
     }
 
-    function handleKeyDown(e) {
+    function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessage();
         }
     }
 
-    function handleInput() {
+    function handleInput(e: ChangeEvent<HTMLTextAreaElement>) {
+        setInputValue(e.target.value);
         if (inputRef.current) {
             inputRef.current.style.height = 'auto';
             inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 120) + 'px';
@@ -90,10 +103,10 @@ export default function ChatContainer({ currentChatId, messages, onMessagesChang
                 <textarea
                     id="input"
                     ref={inputRef}
-                    rows="1"
+                    rows={1}
                     placeholder="Type a message…"
                     value={inputValue}
-                    onChange={(e) => { setInputValue(e.target.value); handleInput(); }}
+                    onChange={handleInput}
                     onKeyDown={handleKeyDown}
                     disabled={isLoading}
                 />
