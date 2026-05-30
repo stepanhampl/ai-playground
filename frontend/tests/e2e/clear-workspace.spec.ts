@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
+import { writeFileSync, readdirSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const CONTAINER_NAME = 'ai-playground-frontend';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test('clear workspace button deletes everything in workspace besides .gitkeep', async ({ page }) => {
-  // Create example.txt in the workspace via docker exec
-  execSync(`docker exec ${CONTAINER_NAME} touch /workspace/example.txt`, { stdio: 'pipe' });
+  // Create example.txt in the local workspace directory
+  writeFileSync(resolve(__dirname, '../../../workspace/37e93528-2e68-493e-b72c-330c902ced4c.txt'), '');
 
   await page.goto('/');
 
@@ -17,11 +19,6 @@ test('clear workspace button deletes everything in workspace besides .gitkeep', 
   await clearBtn.click();
 
   // Verify workspace/ contains only .gitkeep
-  const output = execSync(
-    `docker exec ${CONTAINER_NAME} ls -a /workspace`,
-    { encoding: 'utf8', stdio: 'pipe' }
-  );
-
-  const files = output.split('\n').filter(f => f.trim() !== '' && f !== '.' && f !== '..');
+  const files = readdirSync(resolve(__dirname, '../../../workspace'));
   expect(files).toEqual(['.gitkeep']);
 });
