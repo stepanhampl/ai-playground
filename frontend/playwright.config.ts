@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -6,6 +6,11 @@ export default defineConfig({
   use: {
     baseURL: 'http://0.0.0.0:8000',
     headless: true,
-    channel: 'chrome',
   },
+  projects: [
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+  ],
 });
