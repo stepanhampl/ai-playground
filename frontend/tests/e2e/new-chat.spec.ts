@@ -1,32 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { setup, sendMessage, waitForResponseOrError } from './helpers';
 
 test('new chat button clears messages and adds sidebar entry', async ({ page }) => {
-  await page.goto('/');
+  await setup(page);
 
-  const input = page.locator('#input');
-  const sendBtn = page.locator('#send-btn');
-  await expect(input).toBeVisible();
-
-  // Send a message to ensure at least one chat exists in the sidebar
-  await input.fill('Hello AI, tell me a short fact.');
-  await sendBtn.click();
-
-  // Wait for either AI response or error (placeholder key may cause error)
-  const deadline = Date.now() + 30_000;
-  let chatItemAppeared = false;
-  while (Date.now() < deadline) {
-    const count = await page.locator('.chat-item').count();
-    if (count > 0) { chatItemAppeared = true; break; }
-    const errorCount = await page.locator('#messages .message.error').count();
-    if (errorCount > 0) {
-      // Error appeared — chat may still be created, check sidebar
-      const sidebarCount = await page.locator('.chat-item').count();
-      if (sidebarCount > 0) { chatItemAppeared = true; break; }
-      // Error but no chat in sidebar — still ok to proceed, just no chat
-      break;
-    }
-    await page.waitForTimeout(500);
-  }
+  await sendMessage(page, 'Hello AI, tell me a short fact.');
+  await waitForResponseOrError(page);
 
   // Verify at least one chat item appeared in the sidebar
   const chatItemsBefore = await page.locator('.chat-item').count();
