@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 export async function setup(page: Page): Promise<void> {
   // Use domcontentloaded to avoid waiting for async SPA initialization (API calls
