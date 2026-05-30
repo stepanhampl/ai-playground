@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, Page } from '@playwright/test';
 
 export async function setup(page: Page): Promise<void> {
