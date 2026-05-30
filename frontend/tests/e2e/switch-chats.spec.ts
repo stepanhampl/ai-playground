@@ -17,8 +17,7 @@ test('switching between chats restores messages', async ({ page }) => {
   const chatCount = await chatItems.count();
   expect(chatCount).toBeGreaterThanOrEqual(2);
 
-  // Click the second last chat (0 + 1)
-  await chatItems.nth(1).click();
+  await chatItems.nth(2).click();
   
   await expect(page.locator('#messages')).toContainText('CAT');
 });
