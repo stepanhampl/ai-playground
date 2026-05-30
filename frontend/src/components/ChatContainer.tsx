@@ -43,10 +43,10 @@ export default function ChatContainer({
         appendMessage('user', content);
 
         try {
-            const data = await apiSendMessage(content);
+            const aiResponse = await apiSendMessage(content);
             setShowThinking(false);
-            setToolCalls(data.tool_calls ?? []);
-            appendMessage('ai', data.content ?? '(no response)');
+            setToolCalls(aiResponse.tool_calls ?? []);
+            appendMessage('ai', aiResponse.content ?? '(no response)');
         } catch (err: unknown) {
             setShowThinking(false);
             const message = err instanceof Error ? err.message : String(err);
