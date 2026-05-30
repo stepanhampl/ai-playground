@@ -5,3 +5,5 @@ __pycache__/
 /workspace/*
 !/workspace/.gitkeep
 test-results
+frontend/dist/
+frontend/node_modules/

@@ -1,0 +1,2 @@
+/* Re-export existing styles — React components use the same CSS classes */
+@import url('/static/css/style.css');
