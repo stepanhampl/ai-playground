@@ -1,7 +1,13 @@
 import { expect, Page } from '@playwright/test';
 
 export async function setup(page: Page): Promise<void> {
-  await page.goto('/');
+  // Use domcontentloaded to avoid waiting for async SPA initialization (API calls
+  // triggered on page load). This is more resilient when tests run in sequence under
+  // load from the full suite — page.goto('/') with default 'load' times out because
+  // the SPA's init fetch (chats, messages) is slow when the server is busy.
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  // Wait for the app to be fully initialized before proceeding.
+  await page.waitForSelector('#input', { timeout: 60_000 });
   await page.request.post('/api/reset');
 }
 
