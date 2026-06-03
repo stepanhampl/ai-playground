@@ -6,7 +6,7 @@ load_dotenv()
 
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
 LLM_MODEL = os.environ.get("LLM_NAME")
-LLM_PROVIDERS = os.environ.get("LLM_PROVIDERS").split(",")
+LLM_PROVIDERS = os.environ.get("LLM_PROVIDERS", "").split(",")
 
 DB_PATH = "/app/backend/chats.db"
 WORKSPACE = "/workspace"
